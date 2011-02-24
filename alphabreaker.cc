@@ -4,6 +4,7 @@
 #include<string>
 #include<cmath>
 #include<cstdlib>
+#include<algorithm>
 #include "addmod.h"
 #include "solitaire.h"
 

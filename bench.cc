@@ -6,8 +6,9 @@ using namespace std;
 int main(int argc, char **argv)
 {
 
-  string help="-n \t<number> Number of integers to produce\n-q \tQuiet (benchmarking)\n";
+  string help="-n \t<number> Number of integers to produce\n-q \tQuiet (benchmarking)\n-p \tShow probability of a repeate\n";
   bool quiet = false;
+  bool probability = false;
   int num=0;
   
   if (argc > 1 && (static_cast<string>(argv[1]) == "-h" || 
@@ -45,6 +46,10 @@ int main(int argc, char **argv)
 		{
 		  quiet = true;
 		}
+	      else if(argv[i][1] == 'p')
+		{
+		  probability = true;
+		}
 	      else
 		{
 		  cout << help;
@@ -59,11 +64,11 @@ int main(int argc, char **argv)
 
 
 
-  int key[54];
+  int key[DECKSIZE];
   
   //   cout << "Enter the numbers, with space between them:";
   
-  for(int i = 0; i < 54; ++i)
+  for(int i = 0; i < DECKSIZE; ++i)
     {
       key[i] = i + 1;
     }
@@ -72,7 +77,7 @@ int main(int argc, char **argv)
     {
       cout << endl << "Key:";
       
-      for(int i = 0; i < 54; ++i)
+      for(int i = 0; i < DECKSIZE; ++i)
 	{
 	  cout << key[i] << ", ";
 	}
@@ -94,7 +99,57 @@ int main(int argc, char **argv)
   //cout << endl << endl;
 
   vector<int> p;
+
+  if(probability)
+    {
+      for(int i = 1; i < num; ++i)
+	{
+	  p = mydeck.getdeck(i);
+		  mydeck.showdeck();
+	  int repeat = 0;
+	  int modded = 0;
+	  int mod = 26;
+	  //      cout << "String of Ints:\n";
+	  
+	  int lastrepeat=1;
+	  vector<int> repeats;
+	  
+	  for(int i = 1; i < num; ++i)
+	    {
+	      if(p[i-1] == p[i])
+		{
+		  repeat++;
+		  modded++;
+		}
+	      else if(p[i-1]%mod == p[i]%mod)
+		{
+		  //		  mydeck.showdeck();
+		  modded++;
+		  repeats.push_back(lastrepeat);
+		  lastrepeat=-1;
+		}
+	      lastrepeat++;
+	      
+	    }
+	  
+	  
+	  //      cout << "The probability of a repeated output is 1 in " << (double)num/(double)repeat << endl;
+	  //      cout << "The probability of a repeated output modded " << mod << "  by is 1 in " << (double)num/(double)modded << endl;
+	  for(int i = 0; i < repeats.size(); ++i)
+	    {
+	      //	  cout << repeats[i] << ", ";
+	    }
+	  //      cout << endl;
+	  
+	}
+    }
+  else
+    {
+
   p = mydeck.getdeck(num);
+    }
+
+
 
   if(!quiet)
     {
@@ -107,6 +162,8 @@ int main(int argc, char **argv)
 	}
       cout << endl << endl;
     }
+
+
 
 //   char crap;
 //   mydeck.showdeck();

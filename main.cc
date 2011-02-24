@@ -10,33 +10,8 @@ bool keycheck(int a[]);
 int main()
 {
   int* key;
-  key = new int[54];
+  key = new int[DECKSIZE];
   SolDeck* thedeck;
-  //  char go;
-//   do
-//     {
-//       cout << "Enter the key, represented in numbers and Joker A is 53 and Joker B is 54:\n";
-      
-//       for(int i = 0; i < 54; ++i)
-// 	{
-// 	  cin >> key[i];
-// 	}
-//       cout << endl << "Key:";
-      
-//       for(int i = 0; i < 54; ++i)
-// 	{
-// 	  cout << key[i] << ", ";
-// 	}
-//       if(keycheck(key))
-// 	{
-//       cout << endl << "Is this correct? (y or n)";
-//       cin >> go;
-// 	}
-//       else
-// 	{
-// 	  cout << endl << "Incorrect Key.";
-// 	}
-//     }while(go != 'y' && go != 'Y');
 
   thedeck=nkey();
   
@@ -50,10 +25,10 @@ int main()
 bool keycheck(int a[])
 {
 
-  for(int i = 1; i <= 54; ++i)
+  for(int i = 1; i <= DECKSIZE; ++i)
     {
       int count = 0;
-      for(int j = 0; j < 54; ++j)
+      for(int j = 0; j < DECKSIZE; ++j)
 	{
 	  if(a[j] == i)
 	    ++count;
@@ -62,9 +37,9 @@ bool keycheck(int a[])
 	return false;
     }
 
-  for(int i = 0; i < 54; ++i)
+  for(int i = 0; i < DECKSIZE; ++i)
     {
-      if(a[i] > 54 || a[i] < 1)
+      if(a[i] > DECKSIZE || a[i] < 1)
 	return false;
     }
 

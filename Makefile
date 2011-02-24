@@ -2,7 +2,7 @@ CCFLAGS=-g -pedantic -pg -O3
 LIBS=-lgmp
 OBJS=solitaire.o main.o nfront.o addmod.o
 
-all:solitaire bench alphabreaker solpipe numbreaker
+all:solitaire bench alphabreaker solpipe numbreaker matcher
 
 solitaire:$(OBJS)
 	g++ $(CCFLAGS) -lncurses  $(OBJS) -o solitaire 

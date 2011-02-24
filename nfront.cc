@@ -76,7 +76,7 @@ SolDeck* nkey()
   SolDeck* thedeck;
 
   int* key;
-  key = new int[54];
+  key = new int[DECKSIZE];
   int ch;
   int choice=1;
   int choicemax=3;//MAX CHOICE
@@ -143,11 +143,7 @@ SolDeck* nkey()
 
   if(choice == 1)
     {
-      for(int i = 0; i < 54; ++i)
-	{
-	  key[i] = i + 1;
-	}
-      thedeck = new SolDeck(key);
+      thedeck = new SolDeck();
     }
   else if(choice == 2)
     {
@@ -390,10 +386,10 @@ int* enterOwn()
   ///////////////////////////////////////////////////////////////////////
   //enterown
   int* key;
-  key = new int[54];
+  key = new int[DECKSIZE];
   bool go = true, duperror=false;
-  bool already[55];
-  for(int i = 0; i < 55; i++)
+  bool already[DECKSIZE+1];
+  for(int i = 0; i < DECKSIZE+1; i++)
     {
       already[i] = false;
     }
@@ -414,7 +410,7 @@ int* enterOwn()
       move(row(tmp), col(tmp));
       ch = getch();
 
-      if(ch >= 48 && ch <= 57 && (key[index]*10 + (ch - 48)) < 55)
+      if(ch >= 48 && ch <= 57 && (key[index]*10 + (ch - 48)) < DECKSIZE+1)
 	{
 	  key[index] = key[index]*10 + (ch -48);
 	}
@@ -424,19 +420,19 @@ int* enterOwn()
 	    {
 	      duperror = true;
 	    }
-	  else if(index == indexmax && index < 53 
-	     && key[index] > 0 && key[index] < 55)
+	  else if(index == indexmax && index < DECKSIZE-1 
+	     && key[index] > 0 && key[index] < DECKSIZE+1)
 	    {
 	      index++;
 	      indexmax++;
 	    }
 	  else if(index < indexmax
-		  && key[index] > 0 && key[index] < 55)
+		  && key[index] > 0 && key[index] < DECKSIZE+1)
 	    {
 	      index++;
 	    }
-	  else if(index == indexmax && index == 53 
-		  && key[index] > 0 && key[index] < 55)
+	  else if(index == indexmax && index == DECKSIZE-1 
+		  && key[index] > 0 && key[index] < DECKSIZE+1)
 	    {
 	      
 	      return key;
@@ -474,7 +470,11 @@ int* enterOwn()
 	{
 	  if(j < index)
 	    {
-	      if(key[j] > 9)
+	      if(key[j] > 99)
+		{
+		  tmp += 4;
+		}
+	      else if(key[j] > 9)
 		{
 		  tmp +=3;
 		}
@@ -488,7 +488,11 @@ int* enterOwn()
 	    }
 	  else if(j == index)
 	    {
-	      if(key[j] > 9)
+	      if(key[j] > 99)
+		{
+		  tmp +=3;
+		}
+	      else if(key[j] > 9)
 		{
 		  tmp +=2;
 		}

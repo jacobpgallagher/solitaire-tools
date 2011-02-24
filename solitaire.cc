@@ -39,7 +39,7 @@ SolDeck::SolDeck(int a[])
   CardPtr current;
   first = new Card;
   current = first;
-  for(int i = 0; i < DECKSIZE; i++)
+  for(int i = 0; i < DECKSIZE; ++i)
     {
       current->value = a[i];
       if(a[i] == (DECKSIZE - 1))
@@ -54,12 +54,15 @@ SolDeck::SolDeck(int a[])
 	  if(JokerA == NULL)
 	    Afirst = false;
 	}
-      if(a[i + 1] == (DECKSIZE - 1) && JokerA == NULL)
+      if(i + 1 < DECKSIZE && a[i + 1] == (DECKSIZE - 1))
 	PrevA = current;
-      else if(a[i + 1] == DECKSIZE && JokerB == NULL)
+      else if(i + 1 < DECKSIZE && a[i + 1] == DECKSIZE)
 	PrevB = current;
       if(i == (DECKSIZE - 1))
-	last = current;
+	{
+	  last = current;
+	  current->link = NULL;
+	}
       else
 	{
 	  current->link = new Card;
@@ -68,7 +71,7 @@ SolDeck::SolDeck(int a[])
     }
   if(PrevA == NULL)
     PrevA = last;
-  else if(PrevB == NULL)
+  if(PrevB == NULL)
     PrevB = last;
 }
 
@@ -474,6 +477,10 @@ void SolDeck::showdeck()
 {
   for(CardPtr iter=first; iter != NULL; iter=iter->link)
     {
+      if(iter->value < 10)
+	{
+	  cout << "0";
+	}
       cout << iter->value << ", ";
     }
   cout << "\nfirst:" << first->value

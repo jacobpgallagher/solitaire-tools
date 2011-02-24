@@ -4,7 +4,7 @@
 #include<vector>
 
 //remove later!
-#include<iostr2eam>
+#include<iostream>
 
 const int DECKSIZE=54;
 
