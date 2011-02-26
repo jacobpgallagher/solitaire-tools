@@ -105,7 +105,7 @@ int main(int argc, char **argv)
       for(int i = 1; i < num; ++i)
 	{
 	  p = mydeck.getdeck(i);
-		  mydeck.showdeck();
+	  //mydeck.showdeck();
 	  int repeat = 0;
 	  int modded = 0;
 	  int mod = 26;
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
   else
     {
 
-  p = mydeck.getdeck(num);
+      p = mydeck.getdeck(num);
     }
 
 

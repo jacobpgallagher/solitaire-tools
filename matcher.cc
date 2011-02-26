@@ -65,7 +65,7 @@ int main(int argc, char **argv)
       for(Node* iter=head; iter != NULL; iter=iter->next)
 	{
 	  match = true;
-	  for(int i = 0; i < 54; ++i)
+	  for(int i = 0; i < DECKSIZE; ++i)
 	    {
 	      if(!(iter->deck[i] == current->deck[i]) || iter->key == current->key)
 		{
