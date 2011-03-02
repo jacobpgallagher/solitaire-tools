@@ -2,7 +2,7 @@ CCFLAGS=-g -pedantic -pg -O3
 LIBS=-lgmp
 OBJS=solitaire.o main.o nfront.o addmod.o
 
-all:solitaire bench alphabreaker solpipe numbreaker matcher hasher
+all:solitaire bench alphabreaker solpipe numbreaker matcher hasher dumper
 
 solitaire:$(OBJS)
 	g++ $(CCFLAGS) -lncurses  $(OBJS) -o solitaire 
@@ -27,6 +27,9 @@ bench:bench.cc solitaire.o
 
 hasher:hasher.cc solitaire.o
 	g++ $(CCFLAGS)  solitaire.o hasher.cc -o hasher
+
+dumper:dumper.cc solitaire.o
+	g++ $(CCFLAGS)  solitaire.o dumper.cc -o dumper
 
 alphabreaker:alphabreaker.cc solitaire.o addmod.o
 	g++ $(CCFLAGS) alphabreaker.cc solitaire.o addmod.o -o alphabreaker
