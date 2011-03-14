@@ -8,23 +8,21 @@ SolDeck::SolDeck()
 {
   first = new Card;
   CardPtr current = first;
+  first->prev=NULL;
   for(int i = 0; i < (DECKSIZE - 1); ++i)
     {
       current->value = i+1;
-      current->link = new Card;
+      current->next = new Card;
+      current->next->prev=current;
       if(i+1 == DECKSIZE - 1)
 	{
 	  JokerA = current;
-	  PrevB = current;
 	}
-      else if(i+1 == DECKSIZE - 2)
-	PrevA = current;
-
-      current = current->link;
+      current = current->next;
     }
   last = current;
   current->value = DECKSIZE;
-  current->link = NULL;
+  current->next = NULL;
   JokerB = current;
   Afirst = true;
 }
@@ -33,8 +31,6 @@ SolDeck::SolDeck(int a[])
 {
   JokerA = NULL;
   JokerB = NULL;
-  PrevA = NULL;
-  PrevB = NULL;
 
   CardPtr current;
   first = new Card;
@@ -54,96 +50,89 @@ SolDeck::SolDeck(int a[])
 	  if(JokerA == NULL)
 	    Afirst = false;
 	}
-      if(i + 1 < DECKSIZE && a[i + 1] == (DECKSIZE - 1))
-	PrevA = current;
-      else if(i + 1 < DECKSIZE && a[i + 1] == DECKSIZE)
-	PrevB = current;
       if(i == (DECKSIZE - 1))
 	{
 	  last = current;
-	  current->link = NULL;
+	  current->next = NULL;
 	}
       else
 	{
-	  current->link = new Card;
-	  current = current->link;
+	  current->next = new Card;
+	  current->next->prev=current;
+	  current = current->next;
 	}
     }
-  if(PrevA == NULL)
-    PrevA = last;
-  if(PrevB == NULL)
-    PrevB = last;
 }
 
-SolDeck::SolDeck(const char* a)
-{
-  first = new Card;
-  CardPtr current = first;
-  for(int i = 0; i < (DECKSIZE - 1); ++i)
-    {
-      current->value = i+1;
-      current->link = new Card;
-      if(i+1 == DECKSIZE - 1)
-	{
-	  JokerA = current;
-	  PrevB = current;
-	}
-      else if(i+1 == DECKSIZE - 2)
-	PrevA = current;
+// SolDeck::SolDeck(const char* a)
+// {
+//   first = new Card;
+//   CardPtr current = first;
+//   for(int i = 0; i < (DECKSIZE - 1); ++i)
+//     {
+//       current->value = i+1;
+//       current->link = new Card;
+//       if(i+1 == DECKSIZE - 1)
+// 	{
+// 	  JokerA = current;
+// 	  PrevB = current;
+// 	}
+//       else if(i+1 == DECKSIZE - 2)
+// 	PrevA = current;
 
-      current = current->link;
-    }
-  last = current;
-  current->value = DECKSIZE;
-  current->link = NULL;
-  JokerB = current;
-  Afirst = true;
+//       current = current->link;
+//     }
+//   last = current;
+//   current->value = DECKSIZE;
+//   current->link = NULL;
+//   JokerB = current;
+//   Afirst = true;
 
-  keyin(a);
-}
+//   keyin(a);
+// }
 
-SolDeck::SolDeck(vector<int> a)
-{
-  JokerA = NULL;
-  JokerB = NULL;
-  PrevA = NULL;
-  PrevB = NULL;
+// SolDeck::SolDeck(vector<int> a)
+// {
+//   JokerA = NULL;
+//   JokerB = NULL;
+//   PrevA = NULL;
+//   PrevB = NULL;
 
-  CardPtr current;
-  first = new Card;
-  current = first;
-  for(int i = 0; i < DECKSIZE; i++)
-    {
-      current->value = a[i];
-      if(a[i] == (DECKSIZE - 1))
-	{
-	  JokerA = current;
-	  if(JokerB == NULL)
-	    Afirst = true;
-	}
-      else if(a[i] == DECKSIZE)
-	{
-	  JokerB = current;
-	  if(JokerA == NULL)
-	    Afirst = false;
-	}
-      if(a[i + 1] == (DECKSIZE - 1) && JokerA == NULL)
-	PrevA = current;
-      else if(a[i + 1] == DECKSIZE && JokerB == NULL)
-	PrevB = current;
-      if(i == (DECKSIZE - 1))
-	last = current;
-      else
-	{
-	  current->link = new Card;
-	  current = current->link;
-	}
-    }
-  if(PrevA == NULL)
-    PrevA = last;
-  else if(PrevB == NULL)
-    PrevB = last;
-}
+//   CardPtr current;
+//   first = new Card;
+//   current = first;
+//   for(int i = 0; i < DECKSIZE; i++)
+//     {
+//       current->value = a[i];
+//       if(a[i] == (DECKSIZE - 1))
+// 	{
+// 	  JokerA = current;
+// 	  if(JokerB == NULL)
+// 	    Afirst = true;
+// 	}
+//       else if(a[i] == DECKSIZE)
+// 	{
+// 	  JokerB = current;
+// 	  if(JokerA == NULL)
+// 	    Afirst = false;
+// 	}
+//       if(a[i + 1] == (DECKSIZE - 1) && JokerA == NULL)
+// 	PrevA = current;
+//       else if(a[i + 1] == DECKSIZE && JokerB == NULL)
+// 	PrevB = current;
+//       if(i == (DECKSIZE - 1))
+// 	last = current;
+//       else
+// 	{
+// 	  current->link = new Card;
+// 	  current = current->link;
+// 	}
+//     }
+//   if(PrevA == NULL)
+//     PrevA = last;
+//   else if(PrevB == NULL)
+//     PrevB = last;
+// }
 
 
 SolDeck::~SolDeck()
@@ -151,7 +140,7 @@ SolDeck::~SolDeck()
   CardPtr tmp;
   for(CardPtr iter = first; iter != NULL; )
     {
-      tmp = iter->link;
+      tmp = iter->next;
       delete iter;
       iter = tmp;
     }
@@ -161,8 +150,14 @@ SolDeck::~SolDeck()
 
 int SolDeck::step()
 {
+  // cout << "Showing" <<endl;
+  // showdeck();
   jokerswap();
+  // cout << "swapped\n";
+  // showdeck();
   jokercut();
+  // cout << "triple cut\n";
+  // showdeck();
 
   //count cut////////////////////////////////////////////////////////////
   {
@@ -172,6 +167,8 @@ int SolDeck::step()
       countcut(last->value);
   }
   //Final Step/////////////////////////////////////////////////////////////
+  // cout << "count cut\n";
+  // showdeck();
 
   return finalcount(first->value);
 
@@ -199,213 +196,230 @@ vector<int> SolDeck::getdeck(int num)
 
 
 
-void SolDeck::countcut(int count)
-{
-  if(count != (DECKSIZE - 1))
-    {
-      
-      CardPtr PreLast;
-      for(PreLast = first; PreLast->link->link !=NULL; PreLast = PreLast->link)
-	{
-	}
-      
-      CardPtr iter = first;
-      
-      
-      CardPtr BackOfCount = NULL;
-      
-      for(int i = 0; i < count; ++i)
-	{
-	  if(iter != NULL && (iter->value == (DECKSIZE - 1) || iter->value == DECKSIZE))
-	    {
-	      if(Afirst)
-		Afirst = false;
-	      else
-		Afirst = true;
-	    }
-	  iter = iter->link;
-	  if(i == count - 2)
-	    {
-	      BackOfCount = iter;
-	    }
-	}
-      
-      if(BackOfCount == NULL)
-	{
-	  BackOfCount = first;
-	}
-      if(JokerA == first)
-	PrevA = PreLast;
-      else if(JokerB == first)
-	PrevB = PreLast;
-      if(BackOfCount->link == JokerA)
-	PrevA = last;
-      else if(BackOfCount->link == JokerB)
-	PrevB = last;
-      CardPtr tmpfirst = first;
-      first = iter;
-      PreLast->link = tmpfirst;
-      BackOfCount->link = last;
-    }
-}
-
 
 void SolDeck::jokerswap()
 {
-
-
-  //////this fucntion needs work.
-
   CardPtr tmp;
 
+  last->next=first;
+  first->prev=last;
 
-  if(
-     (JokerB->link == JokerA) || 
-     (JokerA == last && JokerB->link->link != JokerA) ||
-     (JokerB == last && first != JokerA) ||
-     (JokerB->link == last && JokerA->link != JokerB)
-     )
+  if (last == JokerA)
     {
-      if(Afirst)
-	Afirst = false;
-      else
-	Afirst = true;
+      last = JokerA->prev;
     }
-
-  last->link = first;
-
-  if(last == JokerB)
+  else if (first == JokerA)
     {
-      last = PrevB;
+      first = JokerA->next;
     }
-  else if(last == JokerA)
+  else if (JokerA->next == last)
     {
-      last = PrevA;
-      if(PrevA == JokerB)
-	last = PrevB;
+      last = JokerA;
     }
-  if(first == JokerA && JokerA->link != JokerB)
+  tmp=JokerA->next;
+  JokerA->next=JokerA->next->next;
+  tmp->prev=JokerA->prev;
+  
+  tmp = JokerA->prev;
+  JokerA->prev = JokerA->next->prev;
+  tmp->next=JokerA->prev;
+
+  tmp = JokerA->next->prev;
+  JokerA->next->prev=JokerA;
+  tmp->next = JokerA;
+
+  //JokerA Moved.
+
+  // last->next = NULL;
+  // first->prev= NULL;
+  // showdeck();
+  // last->next=first;
+  // first->prev=last;
+  
+
+  if (last == JokerB)
     {
-      first = JokerA->link;
+      last = JokerB->prev;
     }
-  else if(first == JokerB)
+  else if (first == JokerB)
     {
-      first = JokerB->link;
-      if(first == JokerA)
-	first = JokerA->link;
+      first = JokerB->next;
     }
+  else if(JokerB->next->next == last)
+    {
+      last = JokerB;
+    }
+  
+  tmp = JokerB->next;
+  JokerB->next = JokerB->next->next->next;
+  tmp->prev=JokerB->prev;
 
-  if(PrevB == JokerA)
-    PrevB = PrevA;
-  tmp = JokerA->link;
-  JokerA->link = JokerA->link->link;
-  PrevA->link = tmp;
-  PrevA->link->link = JokerA;
-  PrevA=PrevA->link;
-  if(PrevB == PrevA)
-    PrevB = PrevB->link;
-  if(last == PrevA)
-    last = JokerA;
+  tmp = JokerB->prev;
+  JokerB->prev=JokerB->next->prev;
+  tmp->next=JokerB->next->prev->prev;
+
+  tmp=JokerB->next->prev;
+  JokerB->next->prev = JokerB;
+  tmp->next=JokerB;
+
+  last->next = NULL;
+  first->prev = NULL;
 
 
-  if(PrevA == JokerB)
-    PrevA = PrevB;
-  tmp = JokerB->link;
-  JokerB->link = JokerB->link->link->link;
-  PrevB->link = tmp;//this seems to be the problem.
-  PrevB->link->link->link = JokerB;
-  PrevB=PrevB->link->link;
-  if(PrevA == PrevB)
-    PrevA = PrevA->link;
-  if(last == PrevB)
-    last = JokerB;
-
-  last->link = NULL;
+  if (JokerA->next == JokerB)
+    {
+      Afirst = true;
+    }
+  else if (first == JokerA)
+    {
+      Afirst = true;
+    }
+  else if (first == JokerB)
+    {
+      Afirst = false;
+    }
+  else if (first->next == JokerA)
+    {
+      Afirst = true;
+    }
+  else if (first->next == JokerB)
+    {
+      Afirst = false;
+    }
+  else if (first->next->next == JokerB)
+    {
+      Afirst = false;
+    }
 
 }
 
 void SolDeck::jokercut()
 {
 
-  //triple cut///////////////////////////////////////////////
-  {
+  CardPtr tmp;
 
-    CardPtr tmp;
-    CardPtr tmplast;
+  if(Afirst)
+    {
+      if(JokerA->prev == NULL && JokerB->next == NULL)
+	{
+	  //Do Nothing.
+	}
+      else if(JokerA->prev == NULL)
+	{
+	  JokerA->prev = last;
+	  last->next=JokerA;
+	  first = JokerB->next;
+	  last = JokerB;
+	  last->next=NULL;
+	  first->prev=NULL;
+	}
+      else if(JokerB->next == NULL)
+	{
+	  JokerB->next = first;
+	  first->prev=JokerB;
+	  last=JokerA->prev;
+	  first = JokerA;
+	  last->next=NULL;
+	  first->prev=NULL;
+	}
+      else
+	{
+	  tmp = first;
+	  first=JokerB->next;
+	  first->prev = NULL;
+	  JokerB->next = tmp;
+	  JokerB->next->prev=JokerB;
 
-    if(Afirst)
-      {
-	tmp = first;
-	tmplast = last;
-	if(JokerB->link != NULL)
-	  {
-	    first = JokerB->link;
-	    last->link = JokerA;
-	  }
-	else
-	  {
-	    first = JokerA;
-	  }
-	if(JokerB->link != JokerA && tmp != first && tmp != JokerA)
-	  JokerB->link = tmp;
-	else
-	  JokerB->link = NULL;
-	if(PrevA != last)
-	  {
-	    PrevA->link = NULL;
-	    last = PrevA;
-	  }
-	else
-	  {
-	    last = JokerB;
-	  }
-	if(tmplast != JokerB)
-	  PrevA = tmplast;
-	else
-	  {
-	    //  PrevA = last;
-	  }
-      }
-    else
-      {
-	tmp = first;
-	tmplast = last;
-	if(JokerA->link != NULL)
-	  {
-	    first = JokerA->link;
-	    last->link = JokerB;
-	  }
-	else
-	  {
-	    first = JokerB;
-	  }
-	if(JokerA->link != JokerB && tmp != first && tmp != JokerB)
-	  JokerA->link = tmp;
-	else
-	  JokerA->link = NULL;
-	if(PrevB != last)
-	  {
-	    PrevB->link = NULL;
-	    last = PrevB;
-	  }
-	else
-	  {
-	    last = JokerA;
-	  }
-	if(tmplast != JokerA)
-	  PrevB = tmplast;
-	else
-	  {
-	  //  PrevB = last;
-	  }
+	  tmp = last;
+	  last = JokerA->prev;
+	  last->next = NULL;
+	  JokerA->prev = tmp;
+	  JokerA->prev->next = JokerA;
+	}
+    }
+  else
+    {
+      if(JokerA->prev == NULL && JokerB->next == NULL)
+	{
+	  //Do Nothing.
+	}
+      else if(JokerB->prev == NULL)
+	{
+	  JokerB->prev = last;
+	  last->next=JokerB;
+	  first = JokerA->next;
+	  last = JokerA;
+	  last->next=NULL;
+	  first->prev=NULL;
+	}
+      else if(JokerA->next == NULL)
+	{
+	  JokerA->next = first;
+	  first->prev=JokerA;
+	  last=JokerB->prev;
+	  first = JokerB;
+	  last->next=NULL;
+	  first->prev=NULL;
+	}
+      else
+	{
+	  tmp = first;
+	  first=JokerA->next;
+	  first->prev = NULL;
+	  JokerA->next = tmp;
+	  JokerA->next->prev=JokerA;
 
-      }
+	  tmp = last;
+	  last = JokerB->prev;
+	  last->next = NULL;
+	  JokerB->prev = tmp;
+	  JokerB->prev->next = JokerB;
+	}
 
-
-  }
-
+    }
 }
 
+
+void SolDeck::countcut(int count)
+{
+  //  cout << count << endl << DECKSIZE << endl;
+  if (count < (DECKSIZE - 1))
+    {
+      CardPtr iter = first;
+      if(iter == JokerA || iter == JokerB)
+	{
+	  //If we see one Joker then Afirst needs to be switched.
+	  //If we see two Jokers it should remain the same.
+	  Afirst = !Afirst;
+	}
+      //start at 1 because iter=first is one.
+      for(int i = 1; i < count; ++i)
+	{
+	  iter = iter->next;
+	  if(iter == JokerA || iter == JokerB)
+	    {
+	      //If we see one Joker then Afirst needs to be switched.
+	      //If we see two Jokers it should remain the same.
+	      Afirst = !Afirst;
+	    }
+	}
+      //cout << "Cutting after " << iter->value << endl;
+
+
+      CardPtr tmp;
+      tmp = iter->next;
+      iter->next = last;
+      tmp->prev=NULL;
+
+      first->prev=last->prev;
+      first->prev->next=first;
+
+      last->prev=iter;
+
+      first = tmp;
+    }
+
+}
 int SolDeck::finalcount(int count)
 {
   
@@ -414,7 +428,7 @@ int SolDeck::finalcount(int count)
     count = (DECKSIZE - 1);
   for(int i = 0; i < count; ++i)
     {
-      iter = iter->link;
+      iter = iter->next;
     }
   
   if(iter->value == (DECKSIZE - 1) || iter->value == DECKSIZE)
@@ -428,66 +442,101 @@ int SolDeck::finalcount(int count)
   }
 
 
-bool SolDeck::keyin(const char* key)
-{
-  int count = 0;
-  for(int i = 0; key[i] != '\0'; i++)
-    {
-      count++;
-    }
-  int* keyint;
-  keyint = new int[count];
+// bool SolDeck::keyin(const char* key)
+// {
+//   int count = 0;
+//   for(int i = 0; key[i] != '\0'; i++)
+//     {
+//       count++;
+//     }
+//   int* keyint;
+//   keyint = new int[count];
 
-  for(int i = 0; i < count; i++)
-    {
-      if(key[i] >= 97 && key[i] <= 122)
-	{
-	  keyint[i] = key[i] - 96;
-	}
-      else if(key[i] >= 65 && key[i] <= 90)
-	{
-	  keyint[i] = key[i] - 64;
-	}
-      else
-	{
-	  delete []keyint;
-	  return false;
-	}
-    }
-  for(int i = 0; i < count; i++)
-    {
-      jokerswap();
-      jokercut();
-      {
-	if(last->value == (DECKSIZE - 1) || last->value == DECKSIZE)
-	  countcut((DECKSIZE - 1));
-	else 
-	  countcut(last->value);
-      }
-      countcut(keyint[i]);
-    }
-  delete []keyint;
-  return true;
+//   for(int i = 0; i < count; i++)
+//     {
+//       if(key[i] >= 97 && key[i] <= 122)
+// 	{
+// 	  keyint[i] = key[i] - 96;
+// 	}
+//       else if(key[i] >= 65 && key[i] <= 90)
+// 	{
+// 	  keyint[i] = key[i] - 64;
+// 	}
+//       else
+// 	{
+// 	  delete []keyint;
+// 	  return false;
+// 	}
+//     }
+//   for(int i = 0; i < count; i++)
+//     {
+//       jokerswap();
+//       jokercut();
+//       {
+// 	if(last->value == (DECKSIZE - 1) || last->value == DECKSIZE)
+// 	  countcut((DECKSIZE - 1));
+// 	else 
+// 	  countcut(last->value);
+//       }
+//       countcut(keyint[i]);
+//     }
+//   delete []keyint;
+//   return true;
 
 
-}
+// }
 
 //remove!
 void SolDeck::showdeck()
 {
-  for(CardPtr iter=first; iter != NULL; iter=iter->link)
+  for(CardPtr iter=first; iter != NULL; iter=iter->next)
     {
-      if(iter->value < 10)
+      if (iter != first)
 	{
-	  cout << "0";
+	  if (iter->prev->next != iter)
+	    {
+	      cout << "Error on " << iter->value << endl;
+	    }
 	}
+      if (iter != last)
+	{
+	  if (iter->next->prev != iter)
+	    {
+	      cout << "Error on " << iter->value << endl;
+	    }
+	}
+    }
+  for(CardPtr iter=first; iter != NULL; iter=iter->next)
+    {
+      if (iter->prev != NULL)
+	{
+	  cout << iter->prev->value << ", ";
+	}
+      else 
+	{
+	  cout << "N, ";
+	}
+    }
+  cout << endl;
+  for(CardPtr iter=first; iter != NULL; iter=iter->next)
+    {
       cout << iter->value << ", ";
+    }
+  cout << endl;
+  for(CardPtr iter=first; iter != NULL; iter=iter->next)
+    {
+      if (iter->next != NULL)
+	{
+	  cout << iter->next->value << ", ";
+	}
+      else
+	{
+	  cout << "N, ";
+	}
     }
   cout << "\nfirst:" << first->value
        << "\nlast:" << last->value
-       << "\nPrevA:" << PrevA->value
        << "\nJokerA:" << JokerA->value
-       << "\nPrevB:" << PrevB->value
        << "\nJokerB:" << JokerB->value
        << "\nAfirst:" << Afirst;
   cout << endl << endl;
@@ -501,7 +550,7 @@ int* SolDeck::getcards()
 
   int i = 0;
 
-  for(CardPtr iter=first; iter != NULL; iter=iter->link)
+  for(CardPtr iter=first; iter != NULL; iter=iter->next)
     {
       temp[i] = iter->value;
       ++i;

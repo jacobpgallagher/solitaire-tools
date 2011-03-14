@@ -6,14 +6,15 @@
 //remove later!
 #include<iostream>
 
-const int DECKSIZE=54;
+const int DECKSIZE=9;
 
 using namespace std;
 
 struct Card
 {
   int value;
-  Card *link;
+  Card *next;
+  Card *prev;
 };
 
 typedef Card* CardPtr;
@@ -22,22 +23,22 @@ class SolDeck
 {
  public:
   SolDeck();
-  SolDeck(int a[]);
-  SolDeck(const char* a);
-  SolDeck(vector<int> a);
+  SolDeck(int a[]); 
+  /* SolDeck(const char* a); */
+  /* SolDeck(vector<int> a); */
   ~SolDeck();
   vector<int> getdeck(int num);
-  bool keyin(const char* key);
+  /* bool keyin(const char* key); */
+  int step();  //Don't use step() if you plan on using getdeck.
 
  private:
-  int step();
   void jokerswap();
   void jokercut();
   void countcut(int count);
   int finalcount(int count);
   CardPtr first;
   CardPtr last;
-  CardPtr JokerA, JokerB, PrevA, PrevB;
+  CardPtr JokerA, JokerB;
   bool Afirst;
   vector<int> pad;
 
