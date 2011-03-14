@@ -19,7 +19,7 @@ int main(int argc, char** argv)
       int key[DECKSIZE];
       for (int i = 0; i < DECKSIZE; ++i)
 	{
-	  key[i]=int(argv[1][i]) - 31;
+	  key[i]=int(argv[1][i]) - 47;
 	}
       mydeck = new SolDeck(key);
 
@@ -34,6 +34,7 @@ int main(int argc, char** argv)
   while (true)
     {
       lastDeck = mydeck->getcards();
+
       for (int i=0; i < DECKSIZE; ++i)
 	{
 	  cout << char(lastDeck[i]);

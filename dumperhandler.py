@@ -5,12 +5,15 @@ import sys,os
 import random
 import time
 import math
+import tarfile
+import tempfile
 
 #stdout is key
 #stderr is stream
 
-DECKSIZE=54
-HASHSHIFTS=min(4,DECKSIZE)
+DECKSIZE=9
+HASHSHIFTS=min(2,DECKSIZE)
+#HASHSHIFTS=DECKSIZE
 
 def recursemkdir(folder, num, morelevels):
     if morelevels > 0:
@@ -19,13 +22,11 @@ def recursemkdir(folder, num, morelevels):
             recursemkdir(os.path.join(folder, str(i)), num, morelevels-1)
 
 class hash:
-    def __init__(self, folder):
-        self.folder=folder
+    def __init__(self):
         self.hashTable=[]
         size=0
         for i in range(DECKSIZE-1,(DECKSIZE -1) - HASHSHIFTS, -1):
             shift=int(math.ceil(math.log(DECKSIZE,2)) * ((HASHSHIFTS - ((DECKSIZE -1) -i)) - 1))
-            #print "i: %i, shift: %i" % (i, shift)
             size = size + (i << shift)
         print "size: %i" % size
         i = 0;
@@ -34,34 +35,25 @@ class hash:
             i += 1
 
 
-        recursemkdir(self.folder, DECKSIZE, HASHSHIFTS-1)
                 
-    def hash(self, toHash):
+    def hash(self, toHash, write=True):
         key = 0
-        directory = self.folder
         for i in range(HASHSHIFTS):
             toadd=(ord(toHash[i])-1) << int(math.ceil(math.log(DECKSIZE,2)) * i)
-            directory = os.path.join(directory,str(ord(toHash[i])-1))
-#            print "Adding %i (%i)" % (toadd, i)
             key += toadd
 
-  #      print ord(toHash[0])
-   #     print ord(toHash[1])
-    #    print key
         if self.hashTable[key]:
-            reader=open(directory + ".hash")
-            tmp = reader.read(len(toHash))
-            while len(tmp) == len(toHash):
-                if toHash == tmp:
+            for i in range(0,len(self.hashTable[key]),DECKSIZE):
+                if self.hashTable[key][i:i+DECKSIZE]==toHash:
                     return True
-                tmp=reader.read(len(toHash))
-            reader.close()
+            if write:
+                self.hashTable[key]+=toHash
+            return False
         else:
-            self.hashTable[key]=True
-        writer=open(directory + ".hash", "a")
-        writer.write(toHash)
-        writer.close()
-        return False
+            if write:
+                self.hashTable[key]=toHash
+            return False
+
 
 if __name__=="__main__":
 
@@ -71,60 +63,101 @@ if __name__=="__main__":
     
     allkeyFiles=[]
     key = range(DECKSIZE)
-    try:
-        os.mkdir(os.path.join(folder, "hashtables"))
-    except:
-        pass
-    hasher = hash(os.path.join(folder, "hashtables"))
+    loophash = hash()
+    keyhash = hash()
 
+
+    tar=tarfile.open(os.path.join(folder, "Data.tar"),"w:")
+
+
+    
 
     while not totallyDone:
+
+        inLoop=False
 
         keyforProc = ""
         keyforFilename=[]
         for i in key:
-            keyforProc = keyforProc + chr(i + 32)
+            keyforProc = keyforProc + chr(i + 48)
             keyforFilename.append(str(i))
 
         keyforFilename="-".join(keyforFilename)
 
-        fkeyout=open(os.path.join(folder,keyforFilename+".key"),"w")
-        fstreamout=open(os.path.join(folder,keyforFilename+".stream"),"w")
+
+        fkeyout=tempfile.TemporaryFile()
+        fstreamout=tempfile.TemporaryFile()
 
         proc=subprocess.Popen(["./dumper", keyforProc], stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+
+
+        tmp=""
+        hashed=False
+        while not hashed:
+            tmp = proc.stdout.read(DECKSIZE)
+            if len(tmp)!=DECKSIZE:
+                print keyforProc
+                print proc.stderr.read()
+                raise Exception("tmp = %i" % len(tmp))
+            hashed=keyhash.hash(tmp)
+            #fkeyout.write(tmp)
+            proc.stderr.read(1)
+            #fstreamout.write(proc.stderr.read(1))
+#        fstreamout.close()
+#        fkeyout.close()
+
+        keyString=""
+        for i in range(len(tmp)):
+            keyString = keyString + str(ord(tmp[i])) + "-"
+        keyString=keyString[:len(keyString)-1]
+
+        keyTar=tarfile.TarInfo(keyString + ".key")
+        streamTar=tarfile.TarInfo(keyString + ".stream")
+
 
         hashed=False
         while not hashed:
             tmp = proc.stdout.read(DECKSIZE)
-            hashed=hasher.hash(tmp)
+            if len(tmp)!=DECKSIZE:
+                print keyforProc
+                print proc.stderr.read()
+                raise Exception("tmp = %i" % len(tmp))
+            hashed=loophash.hash(tmp)
             fkeyout.write(tmp)
             fstreamout.write(proc.stderr.read(1))
-        fstreamout.close()
-        fkeyout.close()
+
+
+        keyTar.size=fkeyout.tell()
+        streamTar.size=fstreamout.tell()
+        fkeyout.seek(0)
+        fstreamout.seek(0)
+        tar.addfile(keyTar, fkeyout)
+        tar.addfile(streamTar,fstreamout)
 
 
         while proc.poll()==None:
-            time.sleep(1)
             os.kill(proc.pid, 9)
 
         fstreamout.close()
 
         usedKey=True
 
-        while usedKey:
-            random.shuffle(key)
+        try:
+            while usedKey:
+                random.shuffle(key)
 
-            keystring=""
-            for i in key:
-                keystring = keystring + chr(i + 1)
+                keystring=""
+                for i in key:
+                    keystring = keystring + chr(i + 1)
 
-            usedKey=hasher.hash(keystring)
-            if usedKey:
-                print "Bad:"
-            else:
-                print "Good:"
-            for num in key:
-                print num,
-            print ""
-
-        
+                usedKey=keyhash.hash(keystring, False)
+                if usedKey:
+                    print "Bad:"
+                else:
+                    print "Good:"
+                for num in key:
+                    print num,
+                print ""
+        except:
+            tar.close()
+            sys.exit(0)
