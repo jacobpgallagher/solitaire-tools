@@ -6,7 +6,7 @@
 //remove later!
 #include<iostream>
 
-const int DECKSIZE=9;
+const int DECKSIZE=54;
 
 using namespace std;
 
