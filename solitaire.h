@@ -24,11 +24,11 @@ class SolDeck
  public:
   SolDeck();
   SolDeck(int a[]); 
-  /* SolDeck(const char* a); */
-  /* SolDeck(vector<int> a); */
+  SolDeck(const char* a); 
+  SolDeck(vector<int> a); 
   ~SolDeck();
   vector<int> getdeck(int num);
-  /* bool keyin(const char* key); */
+  bool keyin(const char* key); 
   int step();  //Don't use step() if you plan on using getdeck.
 
  private:

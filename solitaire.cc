@@ -64,76 +64,53 @@ SolDeck::SolDeck(int a[])
     }
 }
 
-// SolDeck::SolDeck(const char* a)
-// {
-//   first = new Card;
-//   CardPtr current = first;
-//   for(int i = 0; i < (DECKSIZE - 1); ++i)
-//     {
-//       current->value = i+1;
-//       current->link = new Card;
-//       if(i+1 == DECKSIZE - 1)
-// 	{
-// 	  JokerA = current;
-// 	  PrevB = current;
-// 	}
-//       else if(i+1 == DECKSIZE - 2)
-// 	PrevA = current;
+SolDeck::SolDeck(const char* a)
+{
+  SolDeck();
+  keyin(a);
+}
 
-//       current = current->link;
-//     }
-//   last = current;
-//   current->value = DECKSIZE;
-//   current->link = NULL;
-//   JokerB = current;
-//   Afirst = true;
+SolDeck::SolDeck(vector<int> a)
+{
+  if(a.size() != DECKSIZE)
+    {
+      throw "Size of vector not the same as DECKSIZE";
+    }
 
-//   keyin(a);
-// }
+  JokerA = NULL;
+  JokerB = NULL;
 
-// SolDeck::SolDeck(vector<int> a)
-// {
-//   JokerA = NULL;
-//   JokerB = NULL;
-//   PrevA = NULL;
-//   PrevB = NULL;
-
-//   CardPtr current;
-//   first = new Card;
-//   current = first;
-//   for(int i = 0; i < DECKSIZE; i++)
-//     {
-//       current->value = a[i];
-//       if(a[i] == (DECKSIZE - 1))
-// 	{
-// 	  JokerA = current;
-// 	  if(JokerB == NULL)
-// 	    Afirst = true;
-// 	}
-//       else if(a[i] == DECKSIZE)
-// 	{
-// 	  JokerB = current;
-// 	  if(JokerA == NULL)
-// 	    Afirst = false;
-// 	}
-//       if(a[i + 1] == (DECKSIZE - 1) && JokerA == NULL)
-// 	PrevA = current;
-//       else if(a[i + 1] == DECKSIZE && JokerB == NULL)
-// 	PrevB = current;
-//       if(i == (DECKSIZE - 1))
-// 	last = current;
-//       else
-// 	{
-// 	  current->link = new Card;
-// 	  current = current->link;
-// 	}
-//     }
-//   if(PrevA == NULL)
-//     PrevA = last;
-//   else if(PrevB == NULL)
-//     PrevB = last;
-// }
-
+   CardPtr current;
+  first = new Card;
+  current = first;
+  for(int i = 0; i < DECKSIZE; ++i)
+    {
+      current->value = a[i];
+      if(a[i] == (DECKSIZE - 1))
+	{
+	  JokerA = current;
+	  if(JokerB == NULL)
+	    Afirst = true;
+	}
+      else if(a[i] == DECKSIZE)
+	{
+	  JokerB = current;
+	  if(JokerA == NULL)
+	    Afirst = false;
+	}
+      if(i == (DECKSIZE - 1))
+	{
+	  last = current;
+	  current->next = NULL;
+	}
+      else
+	{
+	  current->next = new Card;
+	  current->next->prev=current;
+	  current = current->next;
+	}
+    }
+ }
 
 SolDeck::~SolDeck()
 {
@@ -158,14 +135,7 @@ int SolDeck::step()
   jokercut();
   // cout << "triple cut\n";
   // showdeck();
-
-  //count cut////////////////////////////////////////////////////////////
-  {
-    if(last->value == (DECKSIZE - 1) || last->value == DECKSIZE)
-      countcut((DECKSIZE - 1));
-    else 
-      countcut(last->value);
-  }
+  countcut(last->value);
   //Final Step/////////////////////////////////////////////////////////////
   // cout << "count cut\n";
   // showdeck();
@@ -442,49 +412,44 @@ int SolDeck::finalcount(int count)
   }
 
 
-// bool SolDeck::keyin(const char* key)
-// {
-//   int count = 0;
-//   for(int i = 0; key[i] != '\0'; i++)
-//     {
-//       count++;
-//     }
-//   int* keyint;
-//   keyint = new int[count];
+bool SolDeck::keyin(const char* key)
+{
+  int count = 0;
+  for(int i = 0; key[i] != '\0'; i++)
+    {
+      count++;
+    }
+  int* keyint;
+  keyint = new int[count];
 
-//   for(int i = 0; i < count; i++)
-//     {
-//       if(key[i] >= 97 && key[i] <= 122)
-// 	{
-// 	  keyint[i] = key[i] - 96;
-// 	}
-//       else if(key[i] >= 65 && key[i] <= 90)
-// 	{
-// 	  keyint[i] = key[i] - 64;
-// 	}
-//       else
-// 	{
-// 	  delete []keyint;
-// 	  return false;
-// 	}
-//     }
-//   for(int i = 0; i < count; i++)
-//     {
-//       jokerswap();
-//       jokercut();
-//       {
-// 	if(last->value == (DECKSIZE - 1) || last->value == DECKSIZE)
-// 	  countcut((DECKSIZE - 1));
-// 	else 
-// 	  countcut(last->value);
-//       }
-//       countcut(keyint[i]);
-//     }
-//   delete []keyint;
-//   return true;
+  for(int i = 0; i < count; i++)
+    {
+      if(key[i] >= 97 && key[i] <= 122)
+	{
+	  keyint[i] = key[i] - 96;
+	}
+      else if(key[i] >= 65 && key[i] <= 90)
+	{
+	  keyint[i] = key[i] - 64;
+	}
+      else
+	{
+	  delete []keyint;
+	  return false;
+	}
+    }
+  for(int i = 0; i < count; i++)
+    {
+      jokerswap();
+      jokercut();
+      countcut(last->value);
+      countcut(keyint[i]);
+    }
+  delete []keyint;
+  return true;
 
 
-// }
+}
 
 //remove!
 void SolDeck::showdeck()
