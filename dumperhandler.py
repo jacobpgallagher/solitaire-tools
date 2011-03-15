@@ -63,9 +63,8 @@ if __name__=="__main__":
     
     allkeyFiles=[]
     key = range(DECKSIZE)
-    loophash = hash()
     keyhash = hash()
-
+    loophash = hash()
 
     tar=tarfile.open(os.path.join(folder, "Data.tar"),"w:")
 
@@ -99,40 +98,42 @@ if __name__=="__main__":
                 print keyforProc
                 print proc.stderr.read()
                 raise Exception("tmp = %i" % len(tmp))
-            hashed=keyhash.hash(tmp)
+            hashed=keyhash.hash(tmp) or loophash.hash(tmp, False)
             #fkeyout.write(tmp)
             proc.stderr.read(1)
             #fstreamout.write(proc.stderr.read(1))
 #        fstreamout.close()
 #        fkeyout.close()
 
-        keyString=""
-        for i in range(len(tmp)):
-            keyString = keyString + str(ord(tmp[i])) + "-"
-        keyString=keyString[:len(keyString)-1]
+        if not loophash.hash(tmp, False):
 
-        keyTar=tarfile.TarInfo(keyString + ".key")
-        streamTar=tarfile.TarInfo(keyString + ".stream")
+            keyString=""
+            for i in range(len(tmp)):
+                keyString = keyString + str(ord(tmp[i])) + "-"
+            keyString=keyString[:len(keyString)-1]
 
-
-        hashed=False
-        while not hashed:
-            tmp = proc.stdout.read(DECKSIZE)
-            if len(tmp)!=DECKSIZE:
-                print keyforProc
-                print proc.stderr.read()
-                raise Exception("tmp = %i" % len(tmp))
-            hashed=loophash.hash(tmp)
-            fkeyout.write(tmp)
-            fstreamout.write(proc.stderr.read(1))
+            keyTar=tarfile.TarInfo(keyString + ".key")
+            streamTar=tarfile.TarInfo(keyString + ".stream")
 
 
-        keyTar.size=fkeyout.tell()
-        streamTar.size=fstreamout.tell()
-        fkeyout.seek(0)
-        fstreamout.seek(0)
-        tar.addfile(keyTar, fkeyout)
-        tar.addfile(streamTar,fstreamout)
+            hashed=False
+            while not hashed:
+                tmp = proc.stdout.read(DECKSIZE)
+                if len(tmp)!=DECKSIZE:
+                    print keyforProc
+                    print proc.stderr.read()
+                    raise Exception("tmp = %i" % len(tmp))
+                hashed=loophash.hash(tmp)
+                fkeyout.write(tmp)
+                fstreamout.write(proc.stderr.read(1))
+
+
+            keyTar.size=fkeyout.tell()
+            streamTar.size=fstreamout.tell()
+            fkeyout.seek(0)
+            fstreamout.seek(0)
+            tar.addfile(keyTar, fkeyout)
+            tar.addfile(streamTar,fstreamout)
 
 
         while proc.poll()==None:
@@ -150,7 +151,7 @@ if __name__=="__main__":
                 for i in key:
                     keystring = keystring + chr(i + 1)
 
-                usedKey=keyhash.hash(keystring, False)
+                usedKey=keyhash.hash(keystring, False) or loophash.hash(keystring,False)
                 if usedKey:
                     print "Bad:"
                 else:
