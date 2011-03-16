@@ -12,6 +12,10 @@ using namespace std;
 
 string keystring(int* a, int position);
 
+bool checkDupe(int* key, int size);
+
+bool checkDone(int* key, int size);
+
 int* enterOwn();
 
 int format(int a);

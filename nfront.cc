@@ -381,18 +381,53 @@ void nfront(SolDeck thedeck)
   endwin();
 }
 
+bool checkDupe(int* key, int size)
+{
+  bool* already;
+  already = new bool[DECKSIZE];
+  for (int i = 0; i < DECKSIZE; ++i)
+    {
+      already[i]=false;
+    }
+  for (int i = 0; i < size; ++i)
+    {
+      if (key[i] > 0 && key[i] <= DECKSIZE && already[key[i]-1])
+	{
+	  return true;
+	}
+      else if(key[i] > 0)
+	{
+	  already[key[i]-1]=true;
+	}
+    }
+  
+  return false;
+
+}
+
+bool checkDone(int* key, int size)
+{
+  for (int i = 0; i < size; ++i)
+    {
+      if (key[i] ==0)
+	{
+	  return false;
+	}
+    }
+  return true;
+}
+
 int* enterOwn()
 {
   ///////////////////////////////////////////////////////////////////////
   //enterown
   int* key;
   key = new int[DECKSIZE];
-  bool go = true, duperror=false;
-  bool already[DECKSIZE+1];
-  for(int i = 0; i < DECKSIZE+1; i++)
+  for (int i = 0; i < DECKSIZE; ++i)
     {
-      already[i] = false;
+      key[i]=0;
     }
+  bool go = true;
   int ch = 0, tmp;
   string keystuff = "";
   int index = 0;
@@ -401,10 +436,9 @@ int* enterOwn()
     {
       refresh();
       clear();
-      if(duperror)
+      if(checkDupe(key, indexmax))
 	{
 	  mvprintw(rowmax/2, colmax/2, "Cannot create duplicate cards");
-	  duperror=false;
 	}
       mvprintw(0,0,keystuff.c_str());
       move(row(tmp), col(tmp));
@@ -416,11 +450,7 @@ int* enterOwn()
 	}
       else if(ch == 10 || ch == 32)
 	{
-	  if(already[key[index]])
-	    {
-	      duperror = true;
-	    }
-	  else if(index == indexmax && index < DECKSIZE-1 
+	  if(index == indexmax && index < DECKSIZE-1 
 	     && key[index] > 0 && key[index] < DECKSIZE+1)
 	    {
 	      index++;
@@ -435,29 +465,28 @@ int* enterOwn()
 		  && key[index] > 0 && key[index] < DECKSIZE+1)
 	    {
 	      
-	      return key;
+	      if (!checkDupe(key, indexmax) && checkDone(key,indexmax))
+		{
+		  return key;
+		}
 	    }
 	}
       else if(ch == KEY_RIGHT)
 	{
-	  if(index < indexmax && !(already[key[index]]))
+	  if(index < indexmax)
 	    {
 	      index++;
 	    }
-	  else if(already[key[index]])
-	    duperror=true;
 	}
       else if(ch == KEY_LEFT)
 	{
 	  if(index > 0)
 	    {
-	      already[key[index]] = false;
 	      index--;
 	    }
 	}
       else if(ch == 127)
 	{
-	  already[key[index]] = false;
 	  key[index] = key[index]/10;
 	}
 
@@ -500,14 +529,6 @@ int* enterOwn()
 		{
 		  tmp +=1;
 		}
-	    }
-	  if(j != index)
-	    {
-	      already[key[j]] = true;
-	    }
-	  else
-	    {
-	      already[key[j]] = false;
 	    }
 
 	  keystuff = keystuff + keystring(key[j]) + " ";
