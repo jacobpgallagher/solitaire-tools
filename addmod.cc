@@ -43,7 +43,7 @@ string submod(string plain, vector<int> a)
 {
   int *cipher;
 
-
+  int tmp;
   cipher = new int[plain.length()];
 
   for(int i = 0; i < plain.length(); ++i)
@@ -54,7 +54,12 @@ string submod(string plain, vector<int> a)
 
   for(int i = 0; i < plain.length(); ++i)
     {
-      cipher[i] = ((cipher[i] - a[i] + 52) % 26);
+      tmp = (cipher[i] - a[i]);
+      while (tmp < 0)
+	{
+	  tmp += 26;
+	}
+      cipher[i] = (tmp % 26);
       if(cipher[i] == 0)
 	cipher[i] = 26;
       cipher[i] += 64;
